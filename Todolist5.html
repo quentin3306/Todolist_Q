@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TodoList</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+</head>
+
+<body>
+
+    <section class="container pt-5" id="todolist">
+        <form class="d-flex pb-4">
+            <input required="" class="form-control" type="text" placeholder="Acheter des patates..." name="title"
+                data-com.bitwarden.browser.user-edited="yes">
+            <button class="btn btn-primary">Ajouter</button>
+        </form>
+        <main>
+            <div class="btn-group mb-4" role="group">
+                <button type="button" class=" btn btn-outline-primary active" data-filter="all">Toutes</button>
+                <button type="button" class=" btn btn-outline-primary" data-filter="todo">A faire</button>
+                <button type="button" class=" btn btn-outline-primary" data-filter="done">Faites</button>
+            </div>
+
+            <ul class="list-group">
+                <li class="todo list-group-item d-flex align-items-center">
+                    <input class="form-check-input" type="checkbox" id="todo-1">
+                    <label class="ms-2 form-check-label" for="todo-1">
+                        Tâche à faire 2
+                    </label>
+                    <label class="ms-auto btn btn-danger btn-sm">
+                        <i class="bi-trash">
+                        </i>
+                    </label>
+                </li>
+                <li class="todo list-group-item d-flex align-items-center">
+                    <input class="form-check-input" type="checkbox" id="todo-2">
+                    <label class="ms-2 form-check-label" for="todo-2">
+                        Tâche à faire 1
+                    </label>
+                    <label class="ms-auto btn btn-danger btn-sm">
+                        <i class="bi-trash">
+                        </i>
+                    </label>
+                </li>
+            </ul>
+        </main>
+    </section>
+
+    <script>
+        //Déclaration et initialisation des variables du document HTML
+        const url = 'https://jsonplaceholder.typicode.com/todos?_limit=5';
+        const form = document.querySelector("form");
+        const input = form.querySelector("input");
+        const todoList = document.querySelector("ul");
+
+        //Récupération des données JSON depuis l'URL spécifiée grâce à la fonction fetch
+        fetch(url)
+            .then((response) => response.json())
+            .then((todos) => {
+                todos.forEach((todo) => {
+                    console.log(todo.title);
+                    addTodo(todo.title);
+                });
+            });
+
+        //Ajout d'un écouteur d'événement "submit" au formulaire
+        form.addEventListener("submit", e => {
+            e.preventDefault();
+            addTodo(input.value);
+            input.value = "";
+        });
+
+        //Ajout d'un écouteur d'événement "click" à la liste "todoList" permettant
+        //de supprimer la tâche associé à l'icône cliqué
+        todoList.addEventListener("click", e => {
+            if (e.target.matches("i")) {
+                deleteTodo(e.target.parentElement.parentElement);
+            }
+        });
+
+        //Création de la fonction addTodo qui créé un élément li avec plusieurs classes CSS
+        function addTodo(title) {
+            const todo = document.createElement("li");
+            todo.classList.add("todo", "list-group-item", "d-flex", "align-items-center");
+
+            //Création d'un élément <input> comme case à cocher de type "checkbox"
+            const checkbox = document.createElement("input");
+            checkbox.classList.add("form-check-input");
+            checkbox.type = "checkbox";
+            checkbox.id = `todo-${Date.now()}`;
+
+            //Création d'un élément <label> pour le texte de la tâche et attribution de l'élément "for"
+            //avec id de la case à cocher, puis ajout du titre de la tâche au <label> 
+            const label = document.createElement("label");
+            label.classList.add("ms-2", "form-check-label");
+            label.setAttribute("for", checkbox.id);
+            label.textContent = title;
+
+            //Création d'un élément <label> pour le bouton "supprimer" avec mise en forme
+            //puis définition du contenu HTML de l'élément <label> avec un icône de corbeille
+            const button = document.createElement("label"); // 
+            button.classList.add("ms-auto", "btn", "btn-danger", "btn-sm"); // Ajout de plusieurs classes à l'élément <label> pour la mise en forme
+            button.innerHTML = '<i class="bi-trash"></i>'; // Définition du contenu HTML de l'élément <label> avec un icône de corbeille
+
+            // Ajout de la case à cocher, du texte de la tâche et du bouton "supprimer" à l'élément <li>    
+            todo.appendChild(checkbox);
+            todo.appendChild(label);
+            todo.appendChild(button);
+            // Ajout de l'élément <li> à la liste des tâches
+            todoList.appendChild(todo);
+        }
+
+        // Supprime un élément de la liste de tâches
+        function deleteTodo(todo) {
+            todo.remove();
+        }
+
+    </script>
+
+</body>
+
+</html>
